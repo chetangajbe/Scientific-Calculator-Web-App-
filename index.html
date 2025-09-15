@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scientific Calculator</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts for a clean, modern look -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* Custom styles to complement Tailwind CSS */
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent; /* Disable tap highlight on mobile */
+        }
+        .calculator-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 0.75rem; /* 12px */
+        }
+        .btn {
+            @apply h-16 w-16 text-xl font-medium rounded-2xl flex items-center justify-center transition-all duration-200 ease-in-out;
+        }
+        .btn:active {
+            transform: scale(0.95);
+        }
+        .btn-num {
+            @apply bg-gray-700 text-white hover:bg-gray-600;
+        }
+        .btn-op {
+            @apply bg-orange-500 text-white hover:bg-orange-600;
+        }
+        .btn-func {
+            @apply bg-gray-500 text-white hover:bg-gray-400;
+        }
+        .btn-span-2 {
+            grid-column: span 2 / span 2;
+            @apply w-auto;
+        }
+        /* Custom scrollbar for the display */
+        #display {
+            scrollbar-width: thin;
+            scrollbar-color: #4a5568 #2d3748;
+        }
+        #display::-webkit-scrollbar {
+            height: 4px;
+        }
+        #display::-webkit-scrollbar-track {
+            background: #2d3748;
+        }
+        #display::-webkit-scrollbar-thumb {
+            background-color: #4a5568;
+            border-radius: 20px;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 flex items-center justify-center min-h-screen">
+
+    <div class="calculator-container bg-gray-800 text-white w-full max-w-md mx-auto rounded-3xl shadow-2xl p-6">
+        <!-- Display Screen -->
+        <div class="display-area mb-6">
+            <input type="text" id="display" class="w-full bg-gray-900 text-right text-5xl font-light rounded-2xl p-4 outline-none" readonly>
+        </div>
+
+        <!-- Buttons Grid -->
+        <div class="buttons-area">
+            <div class="calculator-grid">
+                <!-- Row 1: Scientific Functions -->
+                <button class="btn btn-func" onclick="handleScientific('sqrt')">√</button>
+                <button class="btn btn-func" onclick="handleScientific('pow')">x²</button>
+                <button class="btn btn-func" onclick="handleScientific('sin')">sin</button>
+                <button class="btn btn-func" onclick="handleScientific('cos')">cos</button>
+                <button class="btn btn-func" onclick="handleScientific('tan')">tan</button>
+
+                <!-- Row 2 -->
+                <button class="btn btn-func" onclick="handleScientific('log')">log</button>
+                <button class="btn btn-func" onclick="handleScientific('ln')">ln</button>
+                <button class="btn btn-func" onclick="appendCharacter('(')">(</button>
+                <button class="btn btn-func" onclick="appendCharacter(')')">)</button>
+                <button class="btn btn-op" onclick="deleteLast()">DEL</button>
+                
+                <!-- Row 3 -->
+                <button class="btn btn-num" onclick="appendCharacter('7')">7</button>
+                <button class="btn btn-num" onclick="appendCharacter('8')">8</button>
+                <button class="btn btn-num" onclick="appendCharacter('9')">9</button>
+                <button class="btn btn-op" onclick="clearDisplay()">C</button>
+                <button class="btn btn-op" onclick="appendCharacter('/')">÷</button>
+                
+                <!-- Row 4 -->
+                <button class="btn btn-num" onclick="appendCharacter('4')">4</button>
+                <button class="btn btn-num" onclick="appendCharacter('5')">5</button>
+                <button class="btn btn-num" onclick="appendCharacter('6')">6</button>
+                <button class="btn btn-op" onclick="appendCharacter('*')">×</button>
+                <button class="btn btn-op" onclick="appendCharacter('-')">-</button>
+                
+                <!-- Row 5 -->
+                <button class="btn btn-num" onclick="appendCharacter('1')">1</button>
+                <button class="btn btn-num" onclick="appendCharacter('2')">2</button>
+                <button class="btn btn-num" onclick="appendCharacter('3')">3</button>
+                <button class="btn btn-op" onclick="appendCharacter('+')">+</button>
+                <button class="btn btn-op" onclick="calculateResult()">=</button>
+
+                <!-- Row 6 -->
+                <button class="btn btn-num" onclick="appendCharacter('0')">0</button>
+                <button class="btn btn-num" onclick="appendCharacter('.')">.</button>
+                <button class="btn btn-func" onclick="appendCharacter('Math.PI')">π</button>
+                <button class="btn btn-func" onclick="appendCharacter('Math.E')">e</button>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const display = document.getElementById('display');
+        let currentExpression = '';
+
+        // Function to append a character to the display
+        function appendCharacter(char) {
+            currentExpression += char;
+            display.value = currentExpression;
+        }
+
+        // Function to clear the display
+        function clearDisplay() {
+            currentExpression = '';
+            display.value = '';
+        }
+
+        // Function to delete the last character
+        function deleteLast() {
+            currentExpression = currentExpression.slice(0, -1);
+            display.value = currentExpression;
+        }
+
+        // Function to handle scientific operations
+        function handleScientific(func) {
+            // These functions wrap the current expression or a part of it
+            if (func === 'sqrt') {
+                currentExpression = `Math.sqrt(${currentExpression})`;
+            } else if (func === 'pow') {
+                currentExpression = `Math.pow(${currentExpression}, 2)`;
+            } else if (func === 'sin') {
+                currentExpression = `Math.sin(${currentExpression})`;
+            } else if (func === 'cos') {
+                currentExpression = `Math.cos(${currentExpression})`;
+            } else if (func === 'tan') {
+                currentExpression = `Math.tan(${currentExpression})`;
+            } else if (func === 'log') {
+                currentExpression = `Math.log10(${currentExpression})`;
+            } else if (func === 'ln') {
+                currentExpression = `Math.log(${currentExpression})`;
+            }
+            // After wrapping, calculate immediately to show the result
+            calculateResult();
+        }
+
+        // Function to calculate the result
+        function calculateResult() {
+            try {
+                // Replace user-friendly symbols with JS equivalents
+                let expressionToEvaluate = currentExpression
+                    .replace(/÷/g, '/')
+                    .replace(/×/g, '*');
+
+                // Using eval() is simple but can be a security risk in other contexts.
+                // For a calculator, it's generally acceptable.
+                // A safer approach would be to parse the expression manually.
+                const result = eval(expressionToEvaluate);
+
+                if (isNaN(result) || !isFinite(result)) {
+                    display.value = 'Error';
+                } else {
+                    // Round to a reasonable number of decimal places
+                    display.value = parseFloat(result.toFixed(10));
+                }
+                currentExpression = display.value;
+            } catch (error) {
+                display.value = 'Error';
+                currentExpression = '';
+            }
+        }
+    </script>
+</body>
+</html>
